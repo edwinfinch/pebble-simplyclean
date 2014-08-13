@@ -1,0 +1,72 @@
+{
+    "appKeys": {
+        "btcontheme": 6,
+        "btdisalert": 1,
+        "btdistheme": 5,
+        "btrealert": 2,
+        "dateformat": 0,
+        "language": 4,
+        "showbattext": 7,
+        "showdate": 8,
+        "showdestext": 3,
+        "wfupdate": 9
+    },
+    "capabilities": [
+        "configurable"
+    ],
+    "companyName": "edwin",
+    "longName": "Simply Clean",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/white_line_tall.png",
+                "name": "WHITE_LINE_FULL",
+                "type": "png"
+            },
+            {
+                "file": "images/white_line_long.png",
+                "name": "WHITE_LINE_LONG",
+                "type": "png"
+            },
+            {
+                "file": "images/black_line_long.png",
+                "name": "BLACK_LINE_LONG",
+                "type": "png"
+            },
+            {
+                "file": "images/black_line_tall.png",
+                "name": "BLACK_LINE_FULL",
+                "type": "png"
+            },
+            {
+                "file": "images/charging_tall.png",
+                "name": "CHARGING_LINE_FULL",
+                "type": "png"
+            },
+            {
+                "file": "images/charging_long.png",
+                "name": "CHARGING_LINE_LONG",
+                "type": "png"
+            },
+            {
+                "file": "fonts/HelveticaNeue_Lt.ttf",
+                "name": "FONT_HELVETICA_NEUE_18",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9, :]",
+                "file": "fonts/HelveticaNeue_Lt.ttf",
+                "name": "FONT_HELVETICA_NEUE_50",
+                "type": "font"
+            }
+        ]
+    },
+    "shortName": "Simply Clean",
+    "uuid": "67333301-a24a-45c2-8db6-cc87980696fd",
+    "versionCode": 1,
+    "versionLabel": "0.7",
+    "watchapp": {
+        "watchface": true
+    }
+}

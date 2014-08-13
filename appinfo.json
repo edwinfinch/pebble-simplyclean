@@ -14,11 +14,17 @@
     "capabilities": [
         "configurable"
     ],
-    "companyName": "edwin",
+    "companyName": "Edwin and Philipp",
     "longName": "Simply Clean",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/download (5).png",
+                "menuIcon": true,
+                "name": "MENU_ICON",
+                "type": "png"
+            },
             {
                 "file": "images/white_line_tall.png",
                 "name": "WHITE_LINE_FULL",
@@ -65,7 +71,7 @@
     "shortName": "Simply Clean",
     "uuid": "67333301-a24a-45c2-8db6-cc87980696fd",
     "versionCode": 1,
-    "versionLabel": "0.7",
+    "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
     }

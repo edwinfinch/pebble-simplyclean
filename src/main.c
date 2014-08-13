@@ -1,3 +1,11 @@
+/*
+Simply Clean
+Edwin Finch
+Designed by Philipp Weder
+
+Under MIT license
+*/
+
 #include <pebble.h>
 #include "elements.h"
 #include "appkeys.h"

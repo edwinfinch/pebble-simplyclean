@@ -39,6 +39,9 @@ static TextLayer* text_layer_init(GRect location, GColor background, GTextAlignm
 void stopped(Animation *anim, bool finished, void *context)
 {
     property_animation_destroy((PropertyAnimation*) anim);
+	if(currentlyGlancing){
+		currentlyGlancing = 0;
+	}
 }
  
 void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int delay)
@@ -58,6 +61,7 @@ void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int 
 
 
 void glance_this(const char *glancetext, bool vibrate, int vibrateNum, int animationLength, int fullNotify){
+	//Prevent collisions
 	if(currentlyGlancing == 1){
 		return;
 	}
@@ -152,7 +156,7 @@ void process_tuple(Tuple *t)
 	  case SHOWDATE_KEY:
 	  	settings.showdate = value;
 	  	reload_settings();
-	    glance_this("Settings updated.", 1, 2, 5000, 0);
+	    glance_this("Settings updated. Please switch to another watchface then back to apply all changes.", 1, 2, 5000, 2);
 	  	break;
 	  case WFUPDATE_KEY:
 	  	if(versionChecked == 0){
@@ -197,32 +201,32 @@ void format_date_buffer(struct tm *t){
 		if(settings.showdestext){
 			switch(settings.language){
 				case 0:
-					strftime(date_buffer, sizeof(date_buffer), "on %d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "on %d %b. '%y", t);
 					break;
 				case 1:
-					strftime(date_buffer, sizeof(date_buffer), "am %d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "am %d %b. '%y", t);
 					break;
 				case 2:
-					strftime(date_buffer, sizeof(date_buffer), "en %d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "en %d %b. '%y", t);
 					break;
 				case 3:
-					strftime(date_buffer, sizeof(date_buffer), "op %d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "op %d %b. '%y", t);
 					break;
 			}
 		}
 		else{
 			switch(settings.language){
 				case 0:
-					strftime(date_buffer, sizeof(date_buffer), "%d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "%d %b. '%y", t);
 					break;
 				case 1:
-					strftime(date_buffer, sizeof(date_buffer), "%d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "%d %b. '%y", t);
 					break;
 				case 2:
-					strftime(date_buffer, sizeof(date_buffer), "%d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "%d %b. '%y", t);
 					break;
 				case 3:
-					strftime(date_buffer, sizeof(date_buffer), "%d %b. %Y", t);
+					strftime(date_buffer, sizeof(date_buffer), "%d %b. '%y", t);
 					break;
 			}
 		}
@@ -270,12 +274,10 @@ void refresh_battbar(){
 	options.position = BATTBAR_POSITION_BOTTOM;
 	options.direction = BATTBAR_DIRECTION_DOWN;
 	if(refresh_theme(bluetooth_connection_service_peek())){
-		APP_LOG(APP_LOG_LEVEL_INFO, "Theme is black");
 		options.color = BATTBAR_COLOR_BLACK;
 	}
 	else{
 		options.color = BATTBAR_COLOR_WHITE;
-		APP_LOG(APP_LOG_LEVEL_INFO, "Theme is white");
 	}
 	options.isWatchApp = false;
 	SetupBattBar(options, window_layer);
@@ -318,13 +320,11 @@ void bt_handler(bool connected){
 			}
 		}
 		bool themeenabled = refresh_theme(connected);
-		APP_LOG(APP_LOG_LEVEL_INFO, "Theme set to %d (1 == white, 0 == black)", (int)themeenabled);
 		
 		refresh_battbar();
 	}
 	else{
 		bool themeenabled = refresh_theme(connected);
-		APP_LOG(APP_LOG_LEVEL_INFO, "Theme set to %d (1 == white, 0 == black)", (int)themeenabled);
 		booted = 1;
 	}
 }
@@ -334,7 +334,7 @@ void window_load(Window *w){
 	time_layer = text_layer_init(GRect(0, 40, 144, 168), GColorClear, GTextAlignmentCenter, 1);
 	date_layer = text_layer_init(GRect(0, 100, 144, 168), GColorClear, GTextAlignmentCenter, 2);
 	battery_layer = text_layer_init(GRect(0, 140, 144, 168), GColorClear, GTextAlignmentCenter, 2);
-	tis_layer = text_layer_init(GRect(-45, 20, 144, 168), GColorClear, GTextAlignmentCenter, 2);
+	tis_layer = text_layer_init(GRect(15, 20, 144, 168), GColorClear, GTextAlignmentLeft, 2);
 	update_at_a_glance = text_layer_init(GRect(0, 300, 144, 168), GColorWhite, GTextAlignmentCenter, 3);
 	theme = inverter_layer_create(GRect(0, 0, 144, 168));
 	
@@ -344,7 +344,7 @@ void window_load(Window *w){
 	layer_add_child(window_layer, text_layer_get_layer(tis_layer));
 	layer_add_child(window_layer, text_layer_get_layer(battery_layer));
 	layer_add_child(window_layer, text_layer_get_layer(update_at_a_glance));
-	refresh_battbar(); //If you don't call it here it crashes
+	refresh_battbar(); //If you don't call it here it crashes, lol
 	layer_add_child(window_layer, inverter_layer_get_layer(theme));
 	
 	BatteryChargeState charge = battery_state_service_peek();
@@ -376,8 +376,10 @@ void init(){
 		.load = window_load,
 		.unload = window_unload,
 	});
+	
 	h_n = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_HELVETICA_NEUE_50));
 	h_n_small = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_HELVETICA_NEUE_18));
+	
 	battery_state_service_subscribe(&handle_battery);
 	app_message_register_inbox_received(in_received_handler);
 	app_message_open(1028, 512);
@@ -391,12 +393,12 @@ void init(){
 }
 
 void deinit(){
+	persistvalue = persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
+	APP_LOG(APP_LOG_LEVEL_INFO, "Simply Clean deinitialied. %d bytes written.", persistvalue);
 	fonts_unload_custom_font(h_n);
 	fonts_unload_custom_font(h_n_small);
 	window_destroy(window);
 	tick_timer_service_unsubscribe();
-	persistvalue = persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
-	APP_LOG(APP_LOG_LEVEL_INFO, "Simply Clean deinitialied. %d bytes written.", persistvalue);
 }
 
 int main(){

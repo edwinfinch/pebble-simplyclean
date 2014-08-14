@@ -11,7 +11,7 @@ char date_buffer[] = "26 Sept. 2014...";
 TextLayer *time_layer, *date_layer, *battery_layer, *tis_layer, *update_at_a_glance;
 
 int persistvalue;
-int currentAppVer = 3;
+int currentAppVer = 4;
 bool currentlyGlancing = 0;
 int versionChecked = 0;
 GRect finish01, start02;
